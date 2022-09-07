@@ -7,6 +7,8 @@ import { fetchPosts, fetchUser } from "./api";
 
 const App = () => {
   const [posts, setPosts] = useState([]);
+  // const [postId, setPostId] = useState(null);
+  // const [searchTerm, setSearchTerm] = useState("");
   const [token, setToken] = useState(window.localStorage.getItem("token") || "");
   const [user, setUser] = useState(null || {});
   
@@ -19,25 +21,9 @@ const App = () => {
   }
 
   useEffect(() => {
-    const getPosts = async () => {
-      const posts = await fetchPosts()
-      setPosts(posts);
-    }
-    getPosts();
-  }, []);
-
-  useEffect(() => {
-    const createPosts = async () => {
-      const posts = await createPosts()
-      setPosts(posts);
-    }
-    getPosts();
-  }, []);
-
-  useEffect(() => {
     if (token) {
       const getUser = async() => {
-        const { user } = await fetchUser(token);
+        const user = await fetchUser(token);
         setUser(user);
       }
       getUser();
@@ -48,23 +34,39 @@ const App = () => {
     window.localStorage.setItem("token", token);
   }, [token]);
 
+  useEffect(() => {
+    const getPosts = async () => {
+      const posts = await fetchPosts()
+      setPosts(posts);
+    }
+    getPosts();
+  }, []);
+
+  // useEffect(() => {
+  //   const createPosts = async () => {
+  //     const posts = await createPosts()
+  //     setPosts(posts);
+  //   }
+  //   createPosts();
+  // }, []);
+
   return (
     <>
       <div className="p-3">
         <nav className="d-flex justify-content-between mb-4">
-          <span>
-            <Link className="text-decoration-none" to="/">Stranger's Things</Link>
+          <span >
+            <Link className="navbar-brand text-decoration-none" to="/">Stranger's Things</Link>
 
           </span>
           <div>
-            <Link className="text-decoration-none" to="/posts">Posts</Link>
+            <Link className="text-secondary m-4 text-decoration-none" to="/posts">Posts</Link>
             {
               token ?
                 <button onClick={logout}>Log out</button>
                 :
                 <>
-                  <Link className="me" to="/account/login">Login</Link>
-                  <Link to="/account/signup">Sign Up</Link>
+                  <Link className="text-secondary me text-decoration-none" to="/account/login">Login</Link>
+                  <Link className="text-secondary m-4 text-decoration-none" to="/account/signup">Sign Up</Link>
                 </>
             }
           </div>
@@ -75,6 +77,7 @@ const App = () => {
           <Route path="/account/:action" element={<AccountForm setToken={setToken} />} />
         </Routes>
       </div >
+      <Posts />
     </>
   )
 }
