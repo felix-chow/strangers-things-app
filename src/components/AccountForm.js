@@ -7,16 +7,21 @@ const AccountForm = ({ setToken }) => {
     const navigate = useNavigate();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
 
     const handleSubmit = async (e) => {
-        const authFunction = action === "login" ? login : register;
-        e.preventDefault();
-        const { token } = await authFunction(username, password);
-        setToken(token);
-        navigate("/");
-    }
+        try {
+            const authFunction = action === "login" ? login : register;
+            e.preventDefault();
+            const { token } = await authFunction(username, password);
+            setToken(token);
+            navigate("/");
+        } catch (err) {
+            setError(err);
+        }
+    };
 
-    const title = action === "login" ? "Log in" : "Sign up"; 
+    const title = action === "login" ? "Log in" : "Sign up";
     return (
         <>
             <h1>{title}</h1>
@@ -25,6 +30,7 @@ const AccountForm = ({ setToken }) => {
                 <input value={username} onChange={e => setUsername(e.target.value)} name="username" type="text" className="form-control" />
                 <label htmlFor="password" className="form-label">Password</label>
                 <input value={password} onChange={e => setPassword(e.target.value)} name="password" type="password" className="form-control" />
+                {error && <p>{error}</p>}
                 <button type="submit" className="btn btn-primary mt-4">{title}</button>
             </form>
         </>
